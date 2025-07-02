@@ -234,53 +234,52 @@ h1, h2, h3, h4 {
     color: var(--text-color);
 }
 
-/* --- Estilos para CONTACTO --- */
-.contact-form {
-    max-width: 700px;
-    margin: 0 auto;
+/* --- Estilos para CONTACTO (Actualizado) --- */
+.contact-link-container {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 0;
+}
+
+.contact-card {
     background: var(--bg-secondary);
-    padding: 2rem;
+    border: 1px solid var(--border-color);
     border-radius: 12px;
-    border: 1px solid var(--border-color);
-}
-.form-group {
-    margin-bottom: 1.5rem;
-}
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-}
-.form-group input, .form-group textarea {
-    width: 100%;
-    padding: 0.8rem;
-    background: var(--bg-color);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
+    padding: 2rem 3rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    text-decoration: none;
     color: var(--text-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    max-width: 400px;
+}
+
+.contact-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.5), var(--glow-effect);
+    border-color: rgba(240, 0, 132, 0.5);
+}
+
+.contact-card .icon {
+    color: var(--accent-pink);
+}
+
+.contact-card .icon svg {
+    width: 48px;
+    height: 48px;
+}
+
+.contact-card .text h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.contact-card .text p {
+    color: var(--text-secondary);
     font-size: 1rem;
 }
-.form-group input:focus, .form-group textarea:focus {
-    outline: none;
-    border-color: var(--accent-pink);
-    box-shadow: var(--glow-effect);
-}
-.submit-btn {
-    width: 100%;
-    background: var(--accent-pink);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 1rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-.submit-btn:hover {
-    background-color: var(--accent-light-pink);
-    box-shadow: var(--glow-effect);
-}
+
 
 /* --- Estilos para la vista de contenido de materia --- */
 #materia-content-view { display: none; }
