@@ -20,6 +20,43 @@ const materiasData = {
             cuestionarios: [{pregunta: 'La regla "in dubio pro operario" significa que:', opciones: ['En caso de duda, se favorece al empleador.', 'En caso de duda sobre la aplicación de normas, se favorece al trabajador.', 'El trabajador siempre tiene la razón.', 'El empleador puede dudar de la capacidad del trabajador.'], respuestaCorrecta: 1}]
         }
     },
+    'derecho-internacional-publico': {
+        nombre: 'Derecho Internacional Público',
+        descripcion: 'Fundamentos, actores y mecanismos que rigen la comunidad internacional.',
+        contenido: {
+            texto: `<div class="main-content-panel"><h3>Contenido en Construcción</h3><p>El material de estudio para esta materia está siendo desarrollado.</p></div>`,
+            infografia: `
+                <div class="infografia-section">
+                    <h3>Evolución del Derecho Internacional</h3>
+                    <p class="subtitle">De un sistema para regular la coexistencia de Estados a un ordenamiento que gestiona la cooperación y protege valores comunes.</p>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <h4>DIP Clásico (1648)</h4>
+                            <p>Nace con la Paz de Westfalia. Era un derecho liberal, descentralizado y oligocrático. El uso de la fuerza era un derecho del Estado (<i>jus ad bellum</i>).</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <h4>DIP Contemporáneo (1945)</h4>
+                            <p>Surge con la creación de la ONU. Se vuelve institucionalizado, social y humanista. La prohibición del uso de la fuerza (Art. 2.4) es su pilar.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="infografia-section">
+                    <h3>Fuentes del Derecho (Art. 38 ECIJ)</h3>
+                    <p class="subtitle">Identificación de dónde emanan las normas que rigen la comunidad internacional.</p>
+                    <div class="chart-container" style="height: 300px;"><canvas id="fuentesChart"></canvas></div>
+                </div>
+                 <div class="infografia-section">
+                    <h3>Actores en el Escenario Mundial</h3>
+                    <p class="subtitle">El DIP ha evolucionado para reconocer a diversos actores más allá del Estado, cada uno con una capacidad jurídica particular.</p>
+                    <div class="chart-container" style="height: 400px;"><canvas id="sujetosChart"></canvas></div>
+                </div>
+            `,
+            redes: `# Derecho Internacional Público\n## Sujetos\n- Estados\n- Organizaciones Internacionales\n## Fuentes\n- Tratados\n- Costumbre\n## Responsabilidad Internacional`,
+            cuestionarios: []
+        }
+    },
     'derecho-penal-especial': {
         nombre: 'Derecho Penal (P. Especial)',
         descripcion: 'Análisis de los delitos en particular, tipificados en el Código Penal y leyes especiales.',
@@ -51,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const backToEstudioButton = document.getElementById('back-to-estudio-button');
     const { Markmap, Transformer } = window.markmap;
     const transformer = new Transformer();
+    let activeCharts = [];
 
     // --- NAVEGACIÓN PRINCIPAL ---
     function showView(viewId) {
@@ -58,7 +96,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById(viewId).classList.add('active');
         
         navLinks.forEach(link => {
-            // Special handling for logo, as it doesn't have a 'nav-link' class
             if (link.classList.contains('nav-logo')) {
                  link.classList.toggle('active', viewId === 'inicio-view');
             } else {
@@ -110,6 +147,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function cargarContenidoMateria(materiaKey) {
         const materia = materiasData[materiaKey];
         const contentContainer = document.getElementById('content-container');
+        
+        activeCharts.forEach(chart => chart.destroy());
+        activeCharts = [];
         contentContainer.innerHTML = '';
         
         const textoTab = createTabContent('texto', materia.contenido.texto);
@@ -128,6 +168,10 @@ document.addEventListener('DOMContentLoaded', () => {
         Markmap.create(redesTab.querySelector('.markmap-container'), undefined, root);
         
         addEventListenersToMateriaContent(materiaKey);
+        
+        if (materiaKey === 'derecho-internacional-publico') {
+            initDipCharts();
+        }
     }
     
     // --- LÓGICA OTRAS SECCIONES ---
@@ -162,6 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function createInfografiaHTML(items) {
+        if (typeof items === 'string') return items;
         if (!items || items.length === 0) return '<p>No hay infografías disponibles.</p>';
         return `<div class="infografia-grid">${items.map(item => `<div class="info-card"><img src="${item.img}" alt="${item.titulo}"><h4>${item.titulo}</h4><p>${item.texto}</p></div>`).join('')}</div>`;
     }
@@ -225,6 +270,54 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
+    
+    function initDipCharts() {
+        const sharedOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { ticks: { color: 'var(--text-secondary)' }, grid: { color: 'var(--border-color)' } },
+                y: { ticks: { color: 'var(--text-secondary)' }, grid: { color: 'var(--border-color)' } }
+            }
+        };
+
+        const ctxFuentes = document.getElementById('fuentesChart')?.getContext('2d');
+        if(ctxFuentes) {
+            const fuentesChart = new Chart(ctxFuentes, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Tratados', 'Costumbre', 'PGD'],
+                    datasets: [{
+                        data: [55, 35, 10],
+                        backgroundColor: [ '#f00084', '#ff47a8', '#ff84c8'],
+                        borderColor: 'var(--bg-secondary)',
+                        borderWidth: 4
+                    }]
+                },
+                options: { ...sharedOptions, scales: {} }
+            });
+            activeCharts.push(fuentesChart);
+        }
+
+        const ctxSujetos = document.getElementById('sujetosChart')?.getContext('2d');
+        if(ctxSujetos) {
+            const sujetosChart = new Chart(ctxSujetos, {
+                type: 'bar',
+                data: {
+                    labels: ['Estados', 'OIs', 'Individuos', 'Pueblos', 'Atípicos'],
+                    datasets: [{
+                        label: 'Capacidad Jurídica',
+                        data: [100, 75, 50, 40, 30],
+                        backgroundColor: '#f00084',
+                        borderRadius: 5
+                    }]
+                },
+                options: { ...sharedOptions, indexAxis: 'y' }
+            });
+            activeCharts.push(sujetosChart);
+        }
+    }
 
     // --- INICIALIZACIÓN ---
     showView('inicio-view');
@@ -232,3 +325,4 @@ document.addEventListener('DOMContentLoaded', () => {
     generarContenidoDoctrina();
     generarContenidoLegislacion();
 });
+

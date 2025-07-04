@@ -234,7 +234,7 @@ h1, h2, h3, h4 {
     color: var(--text-color);
 }
 
-/* --- Estilos para CONTACTO (Actualizado) --- */
+/* --- Estilos para CONTACTO --- */
 .contact-link-container {
     display: flex;
     justify-content: center;
@@ -280,7 +280,6 @@ h1, h2, h3, h4 {
     font-size: 1rem;
 }
 
-
 /* --- Estilos para la vista de contenido de materia --- */
 #materia-content-view { display: none; }
 .content-header {
@@ -320,5 +319,86 @@ h1, h2, h3, h4 {
 .verify-btn { background: transparent; color: var(--accent-pink); border: 1px solid var(--accent-pink); border-radius: 8px; padding: 0.8rem 1.5rem; cursor: pointer; font-weight: 700; transition: all 0.3s ease; margin-top: 1rem; }
 .verify-btn:hover { background-color: var(--accent-pink); color: white; box-shadow: var(--glow-effect); }
 
+/* --- NUEVOS ESTILOS PARA INFOGRAFÍA DE DIP --- */
+.infografia-section {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+.infografia-section h3 {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent-light-pink);
+}
+.infografia-section .subtitle {
+    text-align: center;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto 2rem auto;
+}
+.timeline {
+    position: relative;
+    padding: 2rem 0;
+}
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: var(--border-color);
+    transform: translateX(-50%);
+}
+.timeline-item {
+    position: relative;
+    width: 50%;
+    padding: 1rem 2rem;
+    margin-bottom: 2rem;
+}
+.timeline-item:nth-child(odd) {
+    left: 0;
+    padding-right: 3rem;
+    text-align: right;
+}
+.timeline-item:nth-child(even) {
+    left: 50%;
+    padding-left: 3rem;
+    text-align: left;
+}
+.timeline-dot {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--bg-secondary);
+    border: 3px solid var(--accent-pink);
+    transform: translateY(-50%);
+    z-index: 1;
+}
+.timeline-item:nth-child(odd) .timeline-dot {
+    right: -8px;
+}
+.timeline-item:nth-child(even) .timeline-dot {
+    left: -8px;
+}
+.timeline-item h4 {
+    color: var(--text-color);
+    font-size: 1.2rem;
+}
+.chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 1rem auto;
+    height: 350px;
+}
+
 /* --- Footer --- */
 .main-footer { text-align: center; padding: 3rem 2rem 2rem; margin-top: 4rem; border-top: 1px solid var(--border-color); color: var(--text-secondary); font-size: 0.9rem; }
+
