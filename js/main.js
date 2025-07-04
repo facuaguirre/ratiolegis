@@ -81,7 +81,8 @@ const legislacionData = [
 
 // --- LÓGICA DE LA PÁGINA ---
 document.addEventListener('DOMContentLoaded', () => {
-    const views = document.querySelectorAll('.view');
+    const allViews = document.querySelectorAll('.view');
+    const mainViews = document.querySelectorAll('#inicio-view, #estudio-view, #doctrina-view, #legislacion-view, #contacto-view');
     const navLinks = document.querySelectorAll('.nav-link, .nav-logo, .cta-button');
     const cardContainer = document.getElementById('card-container');
     const materiaContentView = document.getElementById('materia-content-view');
@@ -92,45 +93,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- NAVEGACIÓN PRINCIPAL ---
     function showView(viewId) {
-        views.forEach(view => view.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active');
+        allViews.forEach(view => view.classList.remove('active'));
+        const viewToShow = document.getElementById(viewId);
+        if (viewToShow) {
+            viewToShow.classList.add('active');
+        }
         
         navLinks.forEach(link => {
+            const linkView = link.dataset.view;
             if (link.classList.contains('nav-logo')) {
                  link.classList.toggle('active', viewId === 'inicio-view');
             } else {
-                 link.classList.toggle('active', link.dataset.view === viewId);
+                 link.classList.toggle('active', linkView === viewId);
             }
         });
-         window.scrollTo(0, 0);
+        window.scrollTo(0, 0);
     }
 
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const viewId = e.currentTarget.dataset.view;
-            if (materiaContentView.classList.contains('active') && viewId === 'estudio-view') {
-                showEstudioView();
-            } else {
-                showView(viewId);
-            }
+            showView(viewId);
         });
     });
 
     // --- LÓGICA DE LA SECCIÓN ESTUDIO ---
-    function showEstudioView() {
-        materiaContentView.classList.remove('active');
-        showView('estudio-view');
-    }
-    
     function showMateriaContentView(materiaKey) {
-        views.forEach(view => view.classList.remove('active'));
+        mainViews.forEach(view => view.classList.remove('active'));
         materiaContentView.classList.add('active');
+        
         document.getElementById('materia-title').textContent = materiasData[materiaKey].nombre;
         cargarContenidoMateria(materiaKey);
+        window.scrollTo(0, 0);
     }
 
-    backToEstudioButton.addEventListener('click', showEstudioView);
+    backToEstudioButton.addEventListener('click', () => showView('estudio-view'));
 
     function generarTarjetasMaterias() {
         cardContainer.innerHTML = '';
@@ -161,16 +159,26 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const tabNav = materiaContentView.querySelector('.tab-nav');
         tabNav.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-        tabNav.querySelector('.tab-button[data-tab="texto"]').classList.add('active');
+        const firstTabButton = tabNav.querySelector('.tab-button[data-tab="texto"]');
+        if(firstTabButton) firstTabButton.classList.add('active');
         textoTab.classList.add('active');
 
-        const { root } = transformer.transform(materia.contenido.redes);
-        Markmap.create(redesTab.querySelector('.markmap-container'), undefined, root);
+        try {
+            const { root } = transformer.transform(materia.contenido.redes);
+            Markmap.create(redesTab.querySelector('.markmap-container'), undefined, root);
+        } catch (e) {
+            console.error("Error al renderizar Markmap:", e);
+            redesTab.querySelector('.markmap-container').innerHTML = '<p style="padding: 1rem; color: var(--text-secondary);">No se pudo cargar la red conceptual.</p>';
+        }
         
         addEventListenersToMateriaContent(materiaKey);
         
         if (materiaKey === 'derecho-internacional-publico') {
-            initDipCharts();
+            try {
+                initDipCharts();
+            } catch(e) {
+                console.error("Error al inicializar los gráficos de DIP:", e);
+            }
         }
     }
     
@@ -275,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const sharedOptions = {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            plugins: { legend: { display: false }, tooltip: { bodyColor: '#fff', titleColor: '#fff', backgroundColor: '#333' } },
             scales: {
                 x: { ticks: { color: 'var(--text-secondary)' }, grid: { color: 'var(--border-color)' } },
                 y: { ticks: { color: 'var(--text-secondary)' }, grid: { color: 'var(--border-color)' } }
